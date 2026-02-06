@@ -3,7 +3,7 @@
  */
 
 // ATENÇÃO: Substitua esta URL pela URL gerada na sua Implantação do Google Apps Script
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwdXhbxJFabslfdbc9-MiE3UiKmnQwnRomh62WIUDkGSOlvHoBT3eZW742hYM0shbuJFg/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxN-_e5Ma7zpOJDMMtrNy8P0Re2cJES8JaIFS6tNtKj4fuqpFyPYTu5aCwwISbjSrg/exec';
 
 /**
  * Envia os dados do paciente para a planilha
