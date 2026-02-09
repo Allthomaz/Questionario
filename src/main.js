@@ -97,7 +97,7 @@ function calculateAndDisplayResults() {
         mentalRiskScore.level
     );
     
-    // Atualizar campos hidden para o PDF
+    // Atualizar campos hidden para o PDF e envio
     document.getElementById('escore_inflamacao').value = inflammationScore.total;
     document.getElementById('nivel_inflamacao').value = inflammationScore.level;
     document.getElementById('escore_risco_mental').value = mentalRiskScore.total;
@@ -110,8 +110,9 @@ function calculateAndDisplayResults() {
  * Coleta os dados e envia para a planilha (chamado no submit)
  */
 async function sendResults() {
-    // Recalcula ou reutiliza os dados visíveis
-    const { inflammationScore, mentalRiskScore } = calculateAndDisplayResults();
+    // Coleta os valores JÁ CALCULADOS dos campos hidden (fonte de verdade do que o usuário vê)
+    const escoreInflamacao = parseInt(document.getElementById('escore_inflamacao').value) || 0;
+    const escoreRiscoMental = parseInt(document.getElementById('escore_risco_mental').value) || 0;
 
     // Formatar data de nascimento para o padrão brasileiro (DD/MM/YYYY)
     const rawNascimento = document.getElementById('nascimento').value;
@@ -123,8 +124,8 @@ async function sendResults() {
         email: document.getElementById('email').value,
         nascimento: nascimentoFormatado,
         telefone: document.getElementById('telefone').value,
-        escore_inflamacao: inflammationScore.total,
-        escore_risco_mental: mentalRiskScore.total
+        escore_inflamacao: escoreInflamacao,
+        escore_risco_mental: escoreRiscoMental
     };
 
     // 4. Enviar para Planilha (Google Sheets)
@@ -142,7 +143,7 @@ async function sendResults() {
                 document.getElementById('submit-status').className = "mt-4 text-sm text-green-600 h-5";
                 
                 // Muda a cor do botão para verde
-                submitButton.classList.remove('bg-green-600', 'hover:bg-green-700'); // Remove classes antigas se houver conflito
+                submitButton.classList.remove('bg-green-600', 'hover:bg-green-700');
                 submitButton.classList.add('bg-green-500', 'hover:bg-green-600');
                 submitButton.innerText = "Enviado!";
             } else {
