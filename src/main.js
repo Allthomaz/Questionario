@@ -24,6 +24,14 @@ document.addEventListener('DOMContentLoaded', () => {
             await sendResults();
         });
     }
+
+    // Listener para o botão de PDF
+    const btnPdf = document.getElementById('btn-pdf');
+    if (btnPdf) {
+        btnPdf.addEventListener('click', () => {
+            generatePDF(inflammationData, mentalRiskData);
+        });
+    }
 });
 
 // Navegação
