@@ -113,16 +113,18 @@ async function sendResults() {
     // Recalcula ou reutiliza os dados visíveis
     const { inflammationScore, mentalRiskScore } = calculateAndDisplayResults();
 
+    // Formatar data de nascimento para o padrão brasileiro (DD/MM/YYYY)
+    const rawNascimento = document.getElementById('nascimento').value;
+    const nascimentoFormatado = rawNascimento ? rawNascimento.split('-').reverse().join('/') : "";
+
     // 3. Coletar Dados do Paciente
     const patientData = {
         nome: document.getElementById('nome').value,
         email: document.getElementById('email').value,
-        nascimento: document.getElementById('nascimento').value,
+        nascimento: nascimentoFormatado,
         telefone: document.getElementById('telefone').value,
         escore_inflamacao: inflammationScore.total,
-        nivel_inflamacao: inflammationScore.level,
-        escore_risco_mental: mentalRiskScore.total,
-        nivel_risco_mental: mentalRiskScore.level
+        escore_risco_mental: mentalRiskScore.total
     };
 
     // 4. Enviar para Planilha (Google Sheets)
