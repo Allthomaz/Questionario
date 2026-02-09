@@ -8,10 +8,22 @@ inject();
 let currentStep = 1;
 const totalSteps = 4;
 
+// ATENÇÃO: Constante solicitada (mas a lógica real de envio está encapsulada em sheetApi.js para manter a organização)
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwdXhbxJFabslfdbc9-MiE3UiKmnQwnRomh62WIUDkGSOlvHoBT3eZW742hYM0shbuJFg/exec';
+
 // Inicializa o formulário ao carregar a página
 document.addEventListener('DOMContentLoaded', () => {
     initializeForm();
     updateProgress();
+    
+    // Listener para o envio do formulário
+    const form = document.getElementById('questionnaireForm');
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Previne recarregamento da página
+            await sendResults();
+        });
+    }
 });
 
 // Navegação
@@ -22,9 +34,9 @@ document.getElementById('nextBtn').addEventListener('click', async () => {
             showStep(currentStep);
             updateProgress();
             
-            // Se chegou ao último passo (Resultados), calcula e exibe
+            // Se chegou ao último passo (Resultados), calcula e exibe (mas não envia ainda)
             if (currentStep === 4) {
-                processResults();
+                calculateAndDisplayResults();
             }
         }
     }
@@ -45,15 +57,61 @@ function updateProgress() {
 }
 
 /**
- * Processa os resultados, exibe na tela e envia para a planilha
+ * Apenas calcula e exibe os resultados na tela (sem enviar)
  */
-async function processResults() {
+function calculateAndDisplayResults() {
+    // 0. Coletar respostas do formulário
+    const form = document.getElementById('questionnaireForm');
+    const formData = new FormData(form);
+    
+    const inflammationAnswers = [];
+    const mentalRiskAnswers = [];
+    
+    let globalIndex = 0;
+    
+    // Coleta inflamação (estrutura aninhada)
+    inflammationData.forEach(category => {
+        category.questions.forEach(() => {
+            const val = formData.get(`inflamacao_${globalIndex}`);
+            inflammationAnswers.push(val ? parseInt(val) : 0);
+            globalIndex++;
+        });
+    });
+    
+    // Coleta risco mental (estrutura plana)
+    mentalRiskData.forEach(() => {
+        const val = formData.get(`risco_mental_${globalIndex}`);
+        mentalRiskAnswers.push(val ? parseInt(val) : 0);
+        globalIndex++;
+    });
+
     // 1. Calcular Escores
-    const inflammationScore = calculateInflammationScore();
-    const mentalRiskScore = calculateMentalRiskScore();
+    const inflammationScore = calculateInflammationScore(inflammationAnswers);
+    const mentalRiskScore = calculateMentalRiskScore(mentalRiskAnswers);
 
     // 2. Exibir na Tela
-    displayResults(inflammationScore, mentalRiskScore);
+    displayResults(
+        inflammationScore.total, 
+        mentalRiskScore.total, 
+        inflammationScore.level, 
+        mentalRiskScore.level
+    );
+    
+    // Atualizar campos hidden para o PDF
+    document.getElementById('escore_inflamacao').value = inflammationScore.total;
+    document.getElementById('nivel_inflamacao').value = inflammationScore.level;
+    document.getElementById('escore_risco_mental').value = mentalRiskScore.total;
+    document.getElementById('nivel_risco_mental').value = mentalRiskScore.level;
+    
+    return { inflammationScore, mentalRiskScore };
+}
+
+/**
+ * Coleta os dados e envia para a planilha (chamado no submit)
+ */
+async function sendResults() {
+    // Recalcula ou reutiliza os dados visíveis
+    const { inflammationScore, mentalRiskScore } = calculateAndDisplayResults();
 
     // 3. Coletar Dados do Paciente
     const patientData = {
@@ -61,19 +119,40 @@ async function processResults() {
         email: document.getElementById('email').value,
         nascimento: document.getElementById('nascimento').value,
         telefone: document.getElementById('telefone').value,
-        escore_inflamacao: inflammationScore.score,
-        nivel_inflamacao: inflammationScore.classification,
-        escore_risco_mental: mentalRiskScore.score,
-        nivel_risco_mental: mentalRiskScore.classification
+        escore_inflamacao: inflammationScore.total,
+        nivel_inflamacao: inflammationScore.level,
+        escore_risco_mental: mentalRiskScore.total,
+        nivel_risco_mental: mentalRiskScore.level
     };
 
     // 4. Enviar para Planilha (Google Sheets)
-    // O envio é feito em "background", sem bloquear a visualização do usuário
-    sendDataToSheet(patientData).then(success => {
-        if (success) {
-            console.log("Dados sincronizados com a planilha.");
-        } else {
+    const submitButton = document.getElementById('submitButton');
+    const originalBtnText = submitButton.innerText;
+    
+    submitButton.innerText = "Enviando...";
+    submitButton.disabled = true;
+
+    sendDataToSheet(patientData)
+        .then(success => {
+            if (success) {
+                console.log("Dados sincronizados com a planilha.");
+                document.getElementById('submit-status').innerText = "Dados enviados com sucesso!";
+                document.getElementById('submit-status').className = "mt-4 text-sm text-green-600 h-5";
+                
+                // Muda a cor do botão para verde
+                submitButton.classList.remove('bg-green-600', 'hover:bg-green-700'); // Remove classes antigas se houver conflito
+                submitButton.classList.add('bg-green-500', 'hover:bg-green-600');
+                submitButton.innerText = "Enviado!";
+            } else {
+                throw new Error("Falha no envio (retornou false)");
+            }
+        })
+        .catch(error => {
+            console.error("Erro de rede ou lógica:", error);
             console.log("Atenção: Configure a URL da planilha em src/services/sheetApi.js");
-        }
-    });
+            document.getElementById('submit-status').innerText = "Erro ao enviar. Tente novamente.";
+            document.getElementById('submit-status').className = "mt-4 text-sm text-red-600 h-5";
+            submitButton.innerText = originalBtnText;
+            submitButton.disabled = false;
+        });
 }
