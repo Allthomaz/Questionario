@@ -2,6 +2,17 @@ import { describe, it, expect } from 'vitest';
 import { calculateInflammationScore, calculateMentalRiskScore } from '../src/logic.js';
 
 describe('Cálculo de Escore de Inflamação', () => {
+    it.each([
+        [9, 'Normal'],
+        [10, 'Leve'],
+        [49, 'Leve'],
+        [50, 'Moderada'],
+        [99, 'Moderada'],
+        [100, 'Grave'],
+    ])('classifica o limite de %i pontos como %s', (total, level) => {
+        expect(calculateInflammationScore([total])).toEqual({ total, level });
+    });
+
     it('deve retornar Normal para pontuação < 10', () => {
         const answers = [1, 1, 1]; // Total 3
         const result = calculateInflammationScore(answers);
@@ -36,6 +47,17 @@ describe('Cálculo de Escore de Inflamação', () => {
 });
 
 describe('Cálculo de Risco Mental', () => {
+    it.each([
+        [0, 'Ideal'],
+        [1, 'Leve'],
+        [9, 'Leve'],
+        [10, 'Moderado'],
+        [20, 'Moderado'],
+        [21, 'Grave'],
+    ])('classifica o limite de %i verdadeiros como %s', (total, level) => {
+        expect(calculateMentalRiskScore([total])).toEqual({ total, level });
+    });
+
     it('deve retornar Ideal para pontuação 0', () => {
         const answers = [0, 0];
         const result = calculateMentalRiskScore(answers);
