@@ -3,6 +3,7 @@ import { calculateInflammationScore, calculateMentalRiskScore, inflammationData,
 import { sendDataToSheet } from './services/sheetApi.js';
 import { goToPreviousStep } from './navigation.js';
 import { inject } from '@vercel/analytics';
+import './styles.css';
 
 inject();
 

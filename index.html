@@ -87,98 +87,113 @@
         }
     </style>
 </head>
-<body class="text-gray-800">
+<body class="clinical-page">
 
-    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-4xl">
+    <main class="container mx-auto p-4 sm:p-6 md:p-8 questionnaire-shell">
         <!-- Cabeçalho -->
-        <header class="text-center mb-8">
-            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">Dr. Bruno Paschoalini</h1>
-            <p class="text-xl text-gray-700 mt-2">Questionário de Inflamação e Risco Mental</p>
+        <header class="premium-glass brand-card text-center">
+            <div class="brand-content">
+                <p class="brand-kicker">Saúde mental e bem-estar</p>
+                <h1 class="brand-title">Dr. Bruno Paschoalini</h1>
+                <p class="brand-subtitle">Questionário de Inflamação e Risco Mental</p>
+            </div>
         </header>
 
         <!-- Barra de Progresso -->
-        <div class="mb-8">
-            <div class="flex justify-between mb-2 text-sm font-medium text-gray-600">
+        <section class="premium-glass progress-card" aria-label="Progresso do questionário">
+            <div class="flex justify-between progress-topline">
                 <span>Progresso</span>
                 <span id="progress-text">0%</span>
             </div>
-            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                <div id="progress-bar" class="bg-cyan-600 h-2.5 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+            <div class="progress-track">
+                <div id="progress-bar" class="transition-all duration-500 ease-out" style="width: 0%"></div>
             </div>
-        </div>
+            <ol class="stepper" aria-label="Etapas">
+                <li class="step-indicator is-active" data-step-indicator="1"><span>1</span>Dados</li>
+                <li class="step-indicator" data-step-indicator="2"><span>2</span>Inflamação</li>
+                <li class="step-indicator" data-step-indicator="3"><span>3</span>Risco Mental</li>
+                <li class="step-indicator" data-step-indicator="4"><span>4</span>Resultado</li>
+            </ol>
+        </section>
 
         <form id="questionnaireForm">
             
             <!-- PASSO 1: Dados Pessoais -->
-            <div id="step-1" class="step-content bg-white p-6 rounded-2xl shadow-sm mb-6">
-                <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Passo 1: Seus Dados</h2>
+            <section id="step-1" class="step-content form-panel mb-6" aria-labelledby="step-1-title">
+                <p class="step-eyebrow">Etapa 1 de 4</p>
+                <h2 id="step-1-title" class="step-title">Seus dados</h2>
+                <p class="step-description mb-6">Vamos começar com as informações necessárias para identificar seu relatório.</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="nome" class="block text-sm font-medium text-gray-700 mb-1">Nome Completo <span class="text-red-500">*</span></label>
-                        <input type="text" id="nome" name="nome" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition">
+                        <label for="nome" class="block field-label mb-2">Nome Completo <span class="text-red-500">*</span></label>
+                        <input type="text" id="nome" name="nome" required class="premium-input">
                     </div>
                     <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-red-500">*</span></label>
-                        <input type="email" id="email" name="email" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition">
+                        <label for="email" class="block field-label mb-2">Email <span class="text-red-500">*</span></label>
+                        <input type="email" id="email" name="email" required class="premium-input">
                     </div>
                     <div>
-                        <label for="nascimento" class="block text-sm font-medium text-gray-700 mb-1">Data de Nascimento <span class="text-red-500">*</span></label>
-                        <input type="date" id="nascimento" name="nascimento" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition">
+                        <label for="nascimento" class="block field-label mb-2">Data de Nascimento <span class="text-red-500">*</span></label>
+                        <input type="date" id="nascimento" name="nascimento" required class="premium-input">
                     </div>
                      <div>
-                        <label for="telefone" class="block text-sm font-medium text-gray-700 mb-1">Telefone <span class="text-red-500">*</span></label>
-                        <input type="tel" id="telefone" name="telefone" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition" placeholder="(00) 00000-0000">
+                        <label for="telefone" class="block field-label mb-2">Telefone <span class="text-red-500">*</span></label>
+                        <input type="tel" id="telefone" name="telefone" required class="premium-input" placeholder="(00) 00000-0000">
                     </div>
                 </div>
-            </div>
+            </section>
 
             <!-- PASSO 2: Inflamação -->
-            <div id="step-2" class="step-content hidden bg-white p-6 rounded-2xl shadow-sm mb-6">
-                <h2 class="text-2xl font-semibold mb-1">Passo 2: Questionário de Inflamação</h2>
-                <p class="text-gray-600 mb-4">Nos últimos 30 dias, como você sentiu os seguintes sintomas?<br><b>Legenda:</b> 0 (Nunca) a 4 (Frequentemente e com grande intensidade).</p>
-                <div id="inflammation-questions" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar"></div>
-            </div>
+            <section id="step-2" class="step-content hidden form-panel mb-6" aria-labelledby="step-2-title">
+                <p class="step-eyebrow">Etapa 2 de 4</p>
+                <h2 id="step-2-title" class="step-title">Questionário de Inflamação</h2>
+                <p class="step-description mb-4">Nos últimos 30 dias, como você sentiu os seguintes sintomas?<br><strong>Legenda:</strong> 0 (Nunca) a 4 (Frequentemente e com grande intensidade).</p>
+                <div id="inflammation-questions" class="question-scroll space-y-3 max-h-[60vh] overflow-y-auto pr-2"></div>
+            </section>
 
             <!-- PASSO 3: Risco Mental -->
-            <div id="step-3" class="step-content hidden bg-white p-6 rounded-2xl shadow-sm mb-6">
-                 <h2 class="text-2xl font-semibold mb-1">Passo 3: Risco Mental</h2>
-                 <p class="text-gray-600 mb-4">Marque "Sim" ou "Não" para cada afirmação abaixo.</p>
-                <div id="mental-risk-questions" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar"></div>
-            </div>
+            <section id="step-3" class="step-content hidden form-panel mb-6" aria-labelledby="step-3-title">
+                 <p class="step-eyebrow">Etapa 3 de 4</p>
+                 <h2 id="step-3-title" class="step-title">Risco Mental</h2>
+                 <p class="step-description mb-4">Marque "Sim" ou "Não" para cada afirmação abaixo.</p>
+                <div id="mental-risk-questions" class="question-scroll space-y-3 max-h-[60vh] overflow-y-auto pr-2"></div>
+            </section>
 
             <!-- PASSO 4: Resultados -->
-            <div id="step-4" class="step-content hidden bg-white p-6 rounded-2xl shadow-sm mt-8 border-t-4 border-cyan-500">
-                 <h2 class="text-2xl font-semibold mb-4 text-center">Passo 4: Seus Resultados</h2>
-                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-center mb-8">
+            <section id="step-4" class="step-content hidden form-panel mt-6" aria-labelledby="step-4-title">
+                 <p class="step-eyebrow text-center">Etapa 4 de 4</p>
+                 <h2 id="step-4-title" class="step-title text-center">Seus resultados</h2>
+                 <p class="step-description text-center mb-6">Uma leitura organizada dos escores informados no questionário.</p>
+                 <div class="grid grid-cols-1 md:grid-cols-2 result-grid text-center mb-8">
                     <!-- Resultado Inflamação -->
-                    <div id="inflammation-result" class="p-4 rounded-lg">
-                        <h3 class="text-lg font-semibold text-gray-700">Escore de Inflamação</h3>
-                        <p id="inflammation-score" class="text-5xl font-bold my-2"></p>
-                        <p id="inflammation-level" class="text-xl font-medium"></p>
+                    <div id="inflammation-result" class="result-card result-normal">
+                        <h3 class="result-label">Escore de Inflamação</h3>
+                        <p id="inflammation-score" class="result-score"></p>
+                        <p id="inflammation-level" class="result-level"></p>
                     </div>
                     <!-- Resultado Risco Mental -->
-                    <div id="mental-risk-result" class="p-4 rounded-lg">
-                        <h3 class="text-lg font-semibold text-gray-700">Risco Mental</h3>
-                        <p id="mental-risk-score" class="text-5xl font-bold my-2"></p>
-                        <p id="mental-risk-level" class="text-xl font-medium"></p>
+                    <div id="mental-risk-result" class="result-card result-normal">
+                        <h3 class="result-label">Risco Mental</h3>
+                        <p id="mental-risk-score" class="result-score"></p>
+                        <p id="mental-risk-level" class="result-level"></p>
                     </div>
                  </div>
                  
                  <div class="text-center">
-                    <button type="button" id="btn-pdf" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 ease-in-out mb-6 w-full sm:w-auto flex items-center justify-center mx-auto gap-2">
+                    <button type="button" id="btn-pdf" class="premium-button button-pdf mb-6 w-full sm:w-auto mx-auto gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                         Baixar Meu Relatório em PDF
                     </button>
 
-                    <p class="mb-4 text-gray-600">Clique abaixo para enviar seus resultados ao Dr. Bruno.</p>
-                    <button type="submit" id="submitButton" class="bg-green-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300 ease-in-out">
+                    <p class="mb-4 step-description">Clique abaixo para enviar seus resultados ao Dr. Bruno.</p>
+                    <button type="submit" id="submitButton" class="premium-button button-primary">
                         Enviar Resultados
                     </button>
                     <p id="submit-status" class="mt-4 text-sm text-gray-600 h-5"></p>
                  </div>
-            </div>
+            </section>
 
             <!-- Campos ocultos para os escores calculados -->
             <input type="hidden" id="escore_inflamacao" name="escore_inflamacao" value="0">
@@ -187,17 +202,17 @@
             <input type="hidden" id="nivel_risco_mental" name="nivel_risco_mental" value="">
 
             <!-- Navegação -->
-            <div class="flex justify-between items-center mt-8 px-4" id="navigation-container">
-                <button type="button" id="prevBtn" class="hidden bg-gray-200 text-gray-700 font-semibold py-2 px-6 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 transition">
+            <nav class="navigation-card flex justify-between items-center gap-3" id="navigation-container" aria-label="Navegação do questionário">
+                <button type="button" id="prevBtn" class="premium-button button-secondary hidden">
                     Anterior
                 </button>
                 <div class="flex-1"></div>
-                <button type="button" id="nextBtn" class="bg-cyan-600 text-white font-bold py-2 px-8 rounded-lg shadow-md hover:bg-cyan-700 focus:outline-none focus:ring-4 focus:ring-cyan-300 transition-all duration-300">
-                    Próximo
+                <button type="button" id="nextBtn" class="premium-button button-primary">
+                    Continuar
                 </button>
-            </div>
+            </nav>
         </form>
-    </div>
+    </main>
 
     <!-- Script Principal (Módulo) -->
     <script type="module" src="/src/main.js"></script>

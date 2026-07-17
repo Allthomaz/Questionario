@@ -26,14 +26,14 @@ export function initializeForm() {
 
     inflammationData.forEach(category => {
         // Título da categoria
-        const catTitle = createElement('h3', ['text-lg', 'font-bold', 'text-cyan-700', 'mt-4', 'mb-2'], category.title);
+        const catTitle = createElement('h3', ['question-section-title'], category.title);
         inflammationContainer.appendChild(catTitle);
 
         category.questions.forEach(q => {
-            const questionWrapper = createElement('div', ['flex', 'flex-col', 'sm:flex-row', 'sm:items-center', 'sm:justify-between', 'py-2', 'border-b', 'border-gray-200', 'last:border-0']);
+            const questionWrapper = createElement('div', ['question-card']);
             const questionName = `inflamacao_${questionIndex}`; 
-            const label = createElement('label', ['flex-1', 'mr-4', 'text-sm', 'mb-2', 'sm:mb-0'], q);
-            const radioGroup = createElement('div', ['flex', 'items-center', 'space-x-2', 'inflammation-radio']);
+            const label = createElement('label', ['question-text'], q);
+            const radioGroup = createElement('div', ['answer-control', 'inflammation-radio']);
             
             for (let i = 0; i <= 4; i++) {
                 const radioId = `q-${questionIndex}-${i}`;
@@ -55,9 +55,9 @@ export function initializeForm() {
     });
 
     mentalRiskData.forEach(q => {
-        const questionWrapper = createElement('div', ['flex', 'flex-col', 'sm:flex-row', 'sm:items-center', 'sm:justify-between', 'p-3', 'border', 'border-gray-200', 'rounded-lg']);
-        const label = createElement('label', ['flex-1', 'mr-4', 'text-sm', 'mb-2', 'sm:mb-0'], q);
-        const radioGroup = createElement('div', ['flex', 'items-center', 'space-x-2', 'mental-radio']);
+        const questionWrapper = createElement('div', ['question-card']);
+        const label = createElement('label', ['question-text'], q);
+        const radioGroup = createElement('div', ['answer-control', 'mental-radio']);
         const questionName = `risco_mental_${questionIndex}`; 
 
         // Opção "Não"
@@ -97,31 +97,33 @@ export function displayResults(inflammationTotal, mentalRiskTotal, inflammationL
     const inflammationLevelEl = document.getElementById('inflammation-level');
     const inflammationResultEl = document.getElementById('inflammation-result');
     
-    let iColorClass;
-    if (inflammationTotal < 10) iColorClass = 'bg-green-100 text-green-700';
-    else if (inflammationTotal < 50) iColorClass = 'bg-yellow-100 text-yellow-700';
-    else if (inflammationTotal < 100) iColorClass = 'bg-orange-100 text-orange-700';
-    else iColorClass = 'bg-red-100 text-red-700';
+    let inflammationTone;
+    if (inflammationTotal < 10) inflammationTone = 'result-normal';
+    else if (inflammationTotal < 50) inflammationTone = 'result-leve';
+    else if (inflammationTotal < 100) inflammationTone = 'result-moderada';
+    else inflammationTone = 'result-grave';
 
     inflammationScoreEl.textContent = inflammationTotal;
     inflammationLevelEl.textContent = inflammationLevel;
-    inflammationResultEl.className = `p-4 rounded-lg ${iColorClass.split(' ')[0]}`;
-    inflammationScoreEl.className = `text-5xl font-bold my-2 ${iColorClass.split(' ')[1]}`;
+    inflammationResultEl.className = `result-card ${inflammationTone}`;
+    inflammationScoreEl.className = 'result-score';
+    inflammationLevelEl.className = 'result-level';
 
     const mentalRiskScoreEl = document.getElementById('mental-risk-score');
     const mentalRiskLevelEl = document.getElementById('mental-risk-level');
     const mentalRiskResultEl = document.getElementById('mental-risk-result');
     
-    let mColorClass;
-    if (mentalRiskTotal === 0) mColorClass = 'bg-green-100 text-green-700';
-    else if (mentalRiskTotal <= 9) mColorClass = 'bg-yellow-100 text-yellow-700';
-    else if (mentalRiskTotal <= 20) mColorClass = 'bg-orange-100 text-orange-700';
-    else mColorClass = 'bg-red-100 text-red-700';
+    let mentalRiskTone;
+    if (mentalRiskTotal === 0) mentalRiskTone = 'result-normal';
+    else if (mentalRiskTotal <= 9) mentalRiskTone = 'result-leve';
+    else if (mentalRiskTotal <= 20) mentalRiskTone = 'result-moderada';
+    else mentalRiskTone = 'result-grave';
 
     mentalRiskScoreEl.textContent = `${mentalRiskTotal} / ${mentalRiskData.length}`;
     mentalRiskLevelEl.textContent = mentalRiskLevel;
-    mentalRiskResultEl.className = `p-4 rounded-lg ${mColorClass.split(' ')[0]}`;
-    mentalRiskScoreEl.className = `text-5xl font-bold my-2 ${mColorClass.split(' ')[1]}`;
+    mentalRiskResultEl.className = `result-card ${mentalRiskTone}`;
+    mentalRiskScoreEl.className = 'result-score';
+    mentalRiskLevelEl.className = 'result-level';
 }
 
 export function updateProgressBar(currentStep, totalSteps) {
@@ -167,6 +169,13 @@ export function showStep(step, totalSteps) {
         nextBtn.textContent = presentation.nextLabel;
         navContainer.classList.remove('hidden');
     }
+
+    document.querySelectorAll('[data-step-indicator]').forEach(indicator => {
+        const indicatorStep = Number(indicator.dataset.stepIndicator);
+        indicator.classList.toggle('is-active', indicatorStep === step);
+        indicator.classList.toggle('is-complete', indicatorStep < step);
+        indicator.setAttribute('aria-current', indicatorStep === step ? 'step' : 'false');
+    });
 
     updateProgressBar(step, totalSteps);
     window.scrollTo({ top: 0, behavior: 'smooth' });
