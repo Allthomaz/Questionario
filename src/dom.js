@@ -43,10 +43,11 @@ export function initializeForm() {
                 radioInput.id = radioId;
                 radioInput.value = i;
                 
-                const radioLabel = createElement('label', [], i.toString());
+                const radioLabel = createElement('label', ['answer-option']);
                 radioLabel.htmlFor = radioId;
+                radioLabel.append(radioInput, createElement('span', [], i.toString()));
                 
-                radioGroup.append(radioInput, radioLabel);
+                radioGroup.append(radioLabel);
             }
             questionWrapper.append(label, radioGroup);
             inflammationContainer.appendChild(questionWrapper);
@@ -68,8 +69,9 @@ export function initializeForm() {
         radioNoInput.id = radioNoId;
         radioNoInput.value = '0';
         
-        const radioNoLabel = createElement('label', [], 'Não');
+        const radioNoLabel = createElement('label', ['answer-option']);
         radioNoLabel.htmlFor = radioNoId;
+        radioNoLabel.append(radioNoInput, createElement('span', [], 'Não'));
 
         // Opção "Sim"
         const radioYesId = `q-${questionIndex}-1`;
@@ -79,10 +81,11 @@ export function initializeForm() {
         radioYesInput.id = radioYesId;
         radioYesInput.value = '1';
         
-        const radioYesLabel = createElement('label', [], 'Sim');
+        const radioYesLabel = createElement('label', ['answer-option']);
         radioYesLabel.htmlFor = radioYesId;
+        radioYesLabel.append(radioYesInput, createElement('span', [], 'Sim'));
 
-        radioGroup.append(radioNoInput, radioNoLabel, radioYesInput, radioYesLabel);
+        radioGroup.append(radioNoLabel, radioYesLabel);
         questionWrapper.append(label, radioGroup);
         mentalRiskContainer.appendChild(questionWrapper);
         questionIndex++;
