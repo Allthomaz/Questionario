@@ -1,6 +1,7 @@
 import { initializeForm, showStep, validateStep, displayResults, generatePDF } from './dom.js';
 import { calculateInflammationScore, calculateMentalRiskScore, inflammationData, mentalRiskData } from './logic.js';
 import { sendDataToSheet } from './services/sheetApi.js';
+import { goToPreviousStep } from './navigation.js';
 import { inject } from '@vercel/analytics';
 
 inject();
@@ -52,7 +53,7 @@ document.getElementById('nextBtn').addEventListener('click', async () => {
 
 document.getElementById('prevBtn').addEventListener('click', () => {
     if (currentStep > 1) {
-        currentStep--;
+        currentStep = goToPreviousStep(currentStep, totalSteps, showStep);
     }
 });
 

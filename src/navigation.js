@@ -8,3 +8,9 @@ export function getStepPresentation(step, totalSteps) {
         progress,
     };
 }
+
+export function goToPreviousStep(currentStep, totalSteps, renderStep) {
+    const previousStep = Math.max(1, currentStep - 1);
+    renderStep(previousStep, totalSteps);
+    return previousStep;
+}

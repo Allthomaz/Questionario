@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { getStepPresentation } from '../src/navigation.js';
+import { describe, expect, it, vi } from 'vitest';
+import { getStepPresentation, goToPreviousStep } from '../src/navigation.js';
 
 describe('navegação do questionário', () => {
     it('configura a etapa anterior ao resultado', () => {
@@ -17,5 +17,14 @@ describe('navegação do questionário', () => {
             showNavigation: false,
             progress: 100,
         });
+    });
+
+    it('renderiza a etapa anterior ao voltar', () => {
+        const renderStep = vi.fn();
+
+        const step = goToPreviousStep(3, 4, renderStep);
+
+        expect(step).toBe(2);
+        expect(renderStep).toHaveBeenCalledWith(2, 4);
     });
 });
