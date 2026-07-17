@@ -15,7 +15,7 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxgxuM0cpAivKmrGCoP4
 document.addEventListener('DOMContentLoaded', () => {
     console.log("App initialized v2 - PDF Fix Applied");
     initializeForm();
-    updateProgress();
+    showStep(currentStep, totalSteps);
     
     // Listener para o envio do formulário
     const form = document.getElementById('questionnaireForm');
@@ -40,8 +40,7 @@ document.getElementById('nextBtn').addEventListener('click', async () => {
     if (validateStep(currentStep)) {
         if (currentStep < totalSteps) {
             currentStep++;
-            showStep(currentStep);
-            updateProgress();
+            showStep(currentStep, totalSteps);
             
             // Se chegou ao último passo (Resultados), calcula e exibe (mas não envia ainda)
             if (currentStep === 4) {
@@ -54,16 +53,8 @@ document.getElementById('nextBtn').addEventListener('click', async () => {
 document.getElementById('prevBtn').addEventListener('click', () => {
     if (currentStep > 1) {
         currentStep--;
-        showStep(currentStep);
-        updateProgress();
     }
 });
-
-function updateProgress() {
-    const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
-    document.getElementById('progress-bar').style.width = `${progress}%`;
-    document.getElementById('progress-text').innerText = `${Math.round(progress)}%`;
-}
 
 /**
  * Apenas calcula e exibe os resultados na tela (sem enviar)

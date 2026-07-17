@@ -1,4 +1,5 @@
 import { inflammationData, mentalRiskData, calculateInflammationScore, calculateMentalRiskScore } from './logic.js';
+import { getStepPresentation } from './navigation.js';
 
 /**
  * Função auxiliar para criar um elemento HTML
@@ -124,7 +125,7 @@ export function displayResults(inflammationTotal, mentalRiskTotal, inflammationL
 }
 
 export function updateProgressBar(currentStep, totalSteps) {
-    const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+    const { progress } = getStepPresentation(currentStep, totalSteps);
     const progressBar = document.getElementById('progress-bar');
     const progressText = document.getElementById('progress-text');
     
@@ -133,6 +134,8 @@ export function updateProgressBar(currentStep, totalSteps) {
 }
 
 export function showStep(step, totalSteps) {
+    const presentation = getStepPresentation(step, totalSteps);
+
     // Esconder todos os passos
     for (let i = 1; i <= totalSteps; i++) {
         const stepEl = document.getElementById(`step-${i}`);
@@ -152,15 +155,16 @@ export function showStep(step, totalSteps) {
     const nextBtn = document.getElementById('nextBtn');
     const navContainer = document.getElementById('navigation-container');
 
-    if (step === 1) {
+    if (!presentation.showPrevious) {
         prevBtn.classList.add('hidden');
-        nextBtn.textContent = 'Próximo';
-        navContainer.classList.remove('hidden');
-    } else if (step === totalSteps) {
-        navContainer.classList.add('hidden'); // Esconder botões de navegação no passo final
     } else {
         prevBtn.classList.remove('hidden');
-        nextBtn.textContent = step === totalSteps - 1 ? 'Ver Resultados' : 'Próximo';
+    }
+
+    if (!presentation.showNavigation) {
+        navContainer.classList.add('hidden'); // Esconder botões de navegação no passo final
+    } else {
+        nextBtn.textContent = presentation.nextLabel;
         navContainer.classList.remove('hidden');
     }
 
